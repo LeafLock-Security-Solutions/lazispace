@@ -14,8 +14,18 @@ We are excited that you are interested in contributing to lazispace! This docume
 ### Pull Requests
 1. Fork the repository and create your branch from `main`.
 2. Make your changes.
-3. Please make sure your code lints.
-4. Issue that pull request!
+3. Ensure your commits follow our [commit message guidelines](docs/commit_guidelines.md).
+4. Please make sure your code lints.
+5. Issue that pull request!
+
+## Commit Guidelines
+
+This repository requires all commits to follow conventional commit standards and be cryptographically signed. Please review our [commit message and signing guidelines](docs/commit_guidelines.md) before making commits.
+
+**Key requirements:**
+- Follow conventional commit format: `<type>: <description>`
+- Sign all commits with GPG
+- Use clear, descriptive commit messages
 
 ---
 We appreciate your contributions!
