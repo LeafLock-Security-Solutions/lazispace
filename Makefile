@@ -15,6 +15,15 @@ help: ## Show this help message
 setup: ## Setup development environment
 	@./scripts/dev-setup.sh
 
+hooks: ## Configure git hooks
+	@echo "Configuring git hooks..."
+	@git config core.hooksPath .githooks
+	@echo "Git hooks configured"
+
+test: ## Run tests with race detector
+	@echo "Running tests..."
+	@$(GO) test -race -v ./...
+
 lint: ## Run linter
 	@echo "Running linter..."
 	@golangci-lint run
