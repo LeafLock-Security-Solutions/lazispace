@@ -22,20 +22,34 @@ Each commit message consists of a **header** and an optional **body**.
 
 The `<type>` must be one of the following:
 
+- **build**: Changes to the build system, tooling, or dependencies.
+- **chore**: Routine tasks, maintenance, or auxiliary tool changes.
+- **docs**: Documentation only changes.
 - **feat**: A new feature for the user.
 - **fix**: A bug fix for the user.
-- **docs**: Documentation only changes.
 - **refactor**: A code change that neither fixes a bug nor adds a feature.
-- **chore**: Changes to the build process or auxiliary tools.
 
-### Example
+### Examples
 
 ```
-feat: Add bug report issue template
+feat: add workspace validation
 
-This commit introduces a new issue template for bug reports.
-It guides the user to provide necessary information like steps to
-reproduce, expected behavior, and environment details.
+This commit introduces validation for workspace configuration files.
+It checks layout structure, command syntax, and environment variables.
+```
+
+```
+build: add git hooks for code quality enforcement
+
+Adds pre-commit, commit-msg, and pre-push hooks to enforce code
+standards before commits reach the repository.
+```
+
+```
+docs: update developer setup guide
+
+Adds instructions for installing development tools and configuring
+the local environment.
 ```
 
 ---

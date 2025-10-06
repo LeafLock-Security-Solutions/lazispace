@@ -5,7 +5,7 @@ commit_msg=$(cat "$commit_msg_file")
 
 # Regex for conventional commit format matching your guidelines
 # Types: feat, fix, docs, refactor, chore
-conventional_commit_regex="^(feat|fix|docs|refactor|chore)(\([a-z0-9_-]+\))?: .+"
+conventional_commit_regex="^(build|feat|fix|docs|refactor|chore)(\([a-z0-9_-]+\))?: .+"
 
 if ! echo "$commit_msg" | head -n1 | grep -qE "$conventional_commit_regex"; then
     echo "Error: Invalid commit message format"
