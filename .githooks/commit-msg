@@ -13,7 +13,7 @@ if ! echo "$commit_msg" | head -n1 | grep -qE "$conventional_commit_regex"; then
     echo "Commit message must follow Conventional Commits format:"
     echo "  <type>[optional scope]: <description>"
     echo ""
-    echo "Allowed types: feat, fix, docs, refactor, chore"
+    echo "Allowed types: build, feat, fix, docs, refactor, chore"
     echo ""
     echo "Examples:"
     echo "  feat: add workspace validation"
