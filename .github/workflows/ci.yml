@@ -11,23 +11,22 @@ permissions:
 
 jobs:
   lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      name: Lint
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v5
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
-        with:
-          go-version-file: 'go.mod'
-          cache: true
+        - name: Set up Go
+          uses: actions/setup-go@v5
+          with:
+            go-version-file: 'go.mod'
+            cache: true
 
-      - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
-
+        - name: Install and run golangci-lint
+          run: |
+            go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+            golangci-lint run
   format:
     name: Format Check
     runs-on: ubuntu-latest
@@ -46,10 +45,8 @@ jobs:
 
       - name: Check formatting
         run: |
-          gofumpt -l .
           if [ -n "$(gofumpt -l .)" ]; then
-            echo "Code is not formatted. Run 'make fmt' locally."
-            gofumpt -l .
+            echo "Code is not formatted. Please run 'make fmt' locally."
             exit 1
           fi
 
