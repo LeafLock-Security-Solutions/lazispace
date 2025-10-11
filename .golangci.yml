@@ -45,6 +45,7 @@ issues:
         - gocognit
         - maintidx
         - cyclop
+        - testpackage  # Allow white-box testing for internal functions
 
 linters:
   enable:
