@@ -1,0 +1,21 @@
+app:
+  name: test-app
+
+log:
+  level: debug
+  format: text
+  console:
+    enabled: true
+  file:
+    enabled: true
+    path: "./test-logs"
+    filename: "test.log"
+    maxSizeMB: 10
+    maxBackups: 2
+    maxAgeDays: 5
+    compress: false
+
+storage:
+  useXDG: false
+  configDir: "./test-config"
+  dataDir: "./test-data"

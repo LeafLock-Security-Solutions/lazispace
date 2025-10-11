@@ -1,0 +1,11 @@
+app:
+  name: test
+
+log:
+  level: invalid-level
+  format: json
+  console:
+    enabled: true
+
+storage:
+  useXDG: true

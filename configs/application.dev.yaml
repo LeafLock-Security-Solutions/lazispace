@@ -1,0 +1,20 @@
+log:
+  level: debug
+  format: text
+  
+  console:
+    enabled: true
+  
+  file:
+    enabled: true
+    path: "./dev-data/logs"
+    filename: "lazispace.log"
+    maxSizeMB: 10
+    maxBackups: 3
+    maxAgeDays: 7
+    compress: false
+
+storage:
+  useXDG: false
+  configDir: "./dev-data/config"
+  dataDir: "./dev-data/data"

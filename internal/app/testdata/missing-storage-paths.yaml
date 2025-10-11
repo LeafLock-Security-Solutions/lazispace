@@ -1,0 +1,13 @@
+app:
+  name: test
+
+log:
+  level: info
+  format: json
+  console:
+    enabled: true
+
+storage:
+  useXDG: false
+  configDir: ""
+  dataDir: ""

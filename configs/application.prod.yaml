@@ -1,0 +1,18 @@
+log:
+  level: info
+  format: json
+  
+  console:
+    enabled: false
+  
+  file:
+    enabled: true
+    path: ""                            # Uses XDG StateHome
+    filename: "lazispace.log"
+    maxSizeMB: 100
+    maxBackups: 5
+    maxAgeDays: 30
+    compress: true
+
+storage:
+  useXDG: true
