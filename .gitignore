@@ -30,3 +30,7 @@ go.work.sum
 # Editor/IDE
 .idea/
 .vscode/
+
+# development and test data folders of lazispace project
+dev-data/
+test-data/
