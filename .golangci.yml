@@ -217,7 +217,7 @@ linters-settings:
 
   goconst:
     min-len: 3
-    min-occurrences: 2
+    min-occurrences: 1
     ignore-tests: true
     match-constant: true
     numbers: false
