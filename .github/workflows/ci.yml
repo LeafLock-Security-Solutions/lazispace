@@ -13,6 +13,7 @@ jobs:
   lint:
       name: Lint
       runs-on: ubuntu-latest
+      timeout-minutes: 10
       steps:
         - name: Checkout code
           uses: actions/checkout@v5
@@ -23,13 +24,16 @@ jobs:
             go-version-file: 'go.mod'
             cache: true
 
-        - name: Install and run golangci-lint
-          run: |
-            go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-            golangci-lint run
+        - name: Run golangci-lint
+          uses: golangci/golangci-lint-action@v6
+          with:
+            version: v1.68
+            args: --timeout=5m
+            skip-cache: false
   format:
     name: Format Check
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -40,8 +44,17 @@ jobs:
           go-version-file: 'go.mod'
           cache: true
 
+      - name: Cache gofumpt
+        uses: actions/cache@v4
+        with:
+          path: ~/go/bin/gofumpt
+          key: ${{ runner.os }}-gofumpt-v0.6.0
+
       - name: Install gofumpt
-        run: go install mvdan.cc/gofumpt@latest
+        run: |
+          if ! command -v gofumpt &> /dev/null; then
+            go install mvdan.cc/gofumpt@v0.6.0
+          fi
 
       - name: Check formatting
         run: |
@@ -53,6 +66,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -77,6 +91,7 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
