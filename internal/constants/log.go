@@ -1,0 +1,23 @@
+package constants
+
+// Log level string values.
+const (
+	LogLevelDebug = "debug"
+	LogLevelInfo  = "info"
+	LogLevelWarn  = "warn"
+	LogLevelError = "error"
+)
+
+// Log format string values.
+const (
+	LogFormatText = "text"
+	LogFormatJSON = "json"
+)
+
+// ValidLogLevels contains all acceptable log level values.
+// Do not modify this slice at runtime.
+var ValidLogLevels = []string{LogLevelDebug, LogLevelInfo, LogLevelWarn, LogLevelError}
+
+// ValidLogFormats contains all acceptable log format values.
+// Do not modify this slice at runtime.
+var ValidLogFormats = []string{LogFormatText, LogFormatJSON}
