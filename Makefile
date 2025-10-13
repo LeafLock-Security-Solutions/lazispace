@@ -17,8 +17,9 @@ setup: ## Setup development environment
 
 hooks: ## Configure git hooks
 	@echo "Configuring git hooks..."
+	@chmod +x .githooks/* 2>/dev/null || true
 	@git config core.hooksPath .githooks
-	@echo "Git hooks configured"
+	@echo "✓ Git hooks configured"
 
 lint: ## Run linter on entire codebase
 	@echo "Running linter on entire codebase..."
