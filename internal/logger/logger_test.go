@@ -802,3 +802,212 @@ func TestSentinelErrors(t *testing.T) {
 		})
 	}
 }
+
+// TestTextLoggerFatal tests the Fatal() method for text logger.
+func TestTextLoggerFatal(t *testing.T) {
+	// Save original exit function
+	originalExit := osExit
+	defer func() { osExit = originalExit }()
+
+	// Mock exit function
+	var exitCode int
+	exitCalled := false
+	osExit = func(code int) {
+		exitCode = code
+		exitCalled = true
+	}
+
+	var buf bytes.Buffer
+	logger := newTextLogger(LevelInfo, &buf)
+
+	logger.Fatal("fatal error", NewField("error", "critical"))
+
+	// Verify log was written
+	output := buf.String()
+	if !strings.Contains(output, "fatal error") {
+		t.Error("Fatal log not written")
+	}
+	if !strings.Contains(output, "FATAL") {
+		t.Error("Fatal log missing FATAL level")
+	}
+	if !strings.Contains(output, "error=critical") {
+		t.Error("Fatal log missing field")
+	}
+
+	// Verify exit was called with code 1
+	if !exitCalled {
+		t.Error("osExit was not called")
+	}
+	if exitCode != 1 {
+		t.Errorf("Expected exit code 1, got %d", exitCode)
+	}
+}
+
+// TestJSONLoggerFatal tests the Fatal() method for JSON logger.
+func TestJSONLoggerFatal(t *testing.T) {
+	// Save original exit function
+	originalExit := osExit
+	defer func() { osExit = originalExit }()
+
+	// Mock exit function
+	var exitCode int
+	exitCalled := false
+	osExit = func(code int) {
+		exitCode = code
+		exitCalled = true
+	}
+
+	var buf bytes.Buffer
+	logger := newJSONLogger(LevelInfo, &buf)
+
+	logger.Fatal("fatal error", NewField("error", "critical"))
+
+	// Verify log was written
+	output := buf.String()
+	if !strings.Contains(output, "fatal error") {
+		t.Error("Fatal log not written")
+	}
+
+	// Parse JSON to verify structure
+	var entry map[string]any
+	if err := json.Unmarshal(buf.Bytes(), &entry); err != nil {
+		t.Fatalf("failed to parse JSON log: %v", err)
+	}
+
+	if entry["level"] != "fatal" {
+		t.Errorf("level = %v, want fatal", entry["level"])
+	}
+	if entry["msg"] != "fatal error" {
+		t.Errorf("msg = %v, want 'fatal error'", entry["msg"])
+	}
+	if entry["error"] != "critical" {
+		t.Errorf("error field = %v, want 'critical'", entry["error"])
+	}
+
+	// Verify exit was called with code 1
+	if !exitCalled {
+		t.Error("osExit was not called")
+	}
+	if exitCode != 1 {
+		t.Errorf("Expected exit code 1, got %d", exitCode)
+	}
+}
+
+// TestGlobalFatal tests the global Fatal() function.
+func TestGlobalFatal(t *testing.T) {
+	// Save original exit function
+	originalExit := osExit
+	defer func() { osExit = originalExit }()
+
+	// Mock exit function
+	var exitCode int
+	exitCalled := false
+	osExit = func(code int) {
+		exitCode = code
+		exitCalled = true
+	}
+
+	tempDir := t.TempDir()
+	logFile := filepath.Join(tempDir, "fatal.log")
+
+	cfg := &app.Config{
+		Log: app.LogConfig{
+			Level:  "info",
+			Format: "text",
+			Console: app.ConsoleConfig{
+				Enabled: false,
+			},
+			File: app.FileLogConfig{
+				Enabled:    true,
+				Path:       tempDir,
+				Filename:   "fatal.log",
+				MaxSizeMB:  10,
+				MaxBackups: 3,
+				MaxAgeDays: 7,
+			},
+		},
+	}
+
+	// Initialize global logger
+	if err := Init(cfg); err != nil {
+		t.Fatalf("Init() error: %v", err)
+	}
+
+	// Call global Fatal
+	Fatal("fatal message", NewField("code", 500))
+
+	// Verify exit was called with code 1
+	if !exitCalled {
+		t.Error("osExit was not called")
+	}
+	if exitCode != 1 {
+		t.Errorf("Expected exit code 1, got %d", exitCode)
+	}
+
+	// Verify log was written to file
+	content, err := os.ReadFile(logFile)
+	if err != nil {
+		t.Fatalf("failed to read log file: %v", err)
+	}
+
+	output := string(content)
+	if !strings.Contains(output, "fatal message") {
+		t.Error("log file missing 'fatal message'")
+	}
+	if !strings.Contains(output, "code=500") {
+		t.Error("log file missing field")
+	}
+}
+
+// TestBufferedLoggerFatal tests the Fatal() method for buffered logger.
+func TestBufferedLoggerFatal(t *testing.T) {
+	// Save original exit function
+	originalExit := osExit
+	defer func() { osExit = originalExit }()
+
+	// Mock exit function
+	var exitCode int
+	exitCalled := false
+	osExit = func(code int) {
+		exitCode = code
+		exitCalled = true
+	}
+
+	buffer := NewBuffered()
+
+	// Log a fatal message to buffer
+	buffer.Fatal("fatal during bootstrap", NewField("stage", "init"))
+
+	// Verify exit was NOT called (buffered logger doesn't exit)
+	if exitCalled {
+		t.Error("buffered logger should not call osExit")
+	}
+
+	// Verify message was buffered
+	if count := buffer.Count(); count != 1 {
+		t.Errorf("buffer.Count() = %d, want 1", count)
+	}
+
+	// Now replay to a real logger and verify it exits
+	var output bytes.Buffer
+	targetLogger := newTextLogger(LevelDebug, &output)
+
+	buffer.ReplayTo(targetLogger)
+
+	// Now exit should have been called during replay
+	if !exitCalled {
+		t.Error("osExit should be called during replay of Fatal log")
+	}
+	if exitCode != 1 {
+		t.Errorf("Expected exit code 1, got %d", exitCode)
+	}
+
+	// Verify the fatal message was replayed
+	logs := output.String()
+	if !strings.Contains(logs, "fatal during bootstrap") {
+		t.Error("replayed logs missing 'fatal during bootstrap'")
+	}
+	if !strings.Contains(logs, "stage=init") {
+		t.Error("replayed logs missing field")
+	}
+}

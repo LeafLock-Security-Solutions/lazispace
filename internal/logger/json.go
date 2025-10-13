@@ -66,10 +66,10 @@ func (l *jsonLogger) Error(msg string, fields ...Field) {
 }
 
 // Fatal logs a fatal-level message as JSON with optional structured fields and then exits the program.
-// Calls os.Exit(1) after logging. Always outputs regardless of log level setting.
+// Calls osExit(1) after logging. Always outputs regardless of log level setting.
 func (l *jsonLogger) Fatal(msg string, fields ...Field) {
 	l.log(LevelFatal.String(), msg, fields...)
-	os.Exit(1)
+	osExit(1)
 }
 
 // log formats and writes a log entry as a JSON object.

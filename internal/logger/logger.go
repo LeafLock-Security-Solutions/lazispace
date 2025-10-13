@@ -95,6 +95,14 @@ var (
 	globalMu sync.RWMutex
 )
 
+// exitFunc is the function used to exit the program.
+// This can be overridden in tests to avoid actually exiting.
+type exitFunc func(int)
+
+// osExit is the exit function used by Fatal() methods.
+// In tests, this can be replaced with a mock function.
+var osExit exitFunc = os.Exit
+
 // Init initializes the global logger with the given configuration.
 func Init(cfg *app.Config) error {
 	Debug("initializing global logger")
@@ -166,7 +174,7 @@ func Fatal(msg string, fields ...Field) {
 	if logger != nil {
 		logger.Fatal(msg, fields...)
 	}
-	os.Exit(1)
+	osExit(1)
 }
 
 // BufferedLogger is a logger that buffers log entries in memory until replayed.

@@ -61,10 +61,10 @@ func (l *textLogger) Error(msg string, fields ...Field) {
 }
 
 // Fatal logs a fatal-level message with optional structured fields and then exits the program.
-// Calls os.Exit(1) after logging. Always outputs regardless of log level setting.
+// Calls osExit(1) after logging. Always outputs regardless of log level setting.
 func (l *textLogger) Fatal(msg string, fields ...Field) {
 	l.log(LevelFatal.UpperString(), msg, fields...)
-	os.Exit(1)
+	osExit(1)
 }
 
 // log formats and writes a log entry in text format.

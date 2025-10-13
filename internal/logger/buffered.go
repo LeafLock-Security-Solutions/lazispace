@@ -11,6 +11,11 @@ const (
 	timestampFieldName = "timestamp"
 )
 
+// Bootstrap buffer configuration.
+const (
+	bootstrapBufferCapacity = 20 // Expected number of bootstrap log entries
+)
+
 // bufferedLogger stores log entries in memory until they can be replayed.
 //
 // This logger is used during application bootstrap before the real logger is initialized.
@@ -37,11 +42,10 @@ type logEntry struct {
 // to a real logger. This is useful for bootstrap phase logging where the logging
 // configuration isn't yet available.
 //
-// Pre-allocates space for approximately 20 log entries to minimize allocations
-// during startup.
+// Pre-allocates space for bootstrap log entries to minimize allocations during startup.
 func NewBuffered() BufferedLogger {
 	return &bufferedLogger{
-		entries: make([]logEntry, 0, 20), // Pre-allocate for ~20 bootstrap logs
+		entries: make([]logEntry, 0, bootstrapBufferCapacity),
 	}
 }
 
