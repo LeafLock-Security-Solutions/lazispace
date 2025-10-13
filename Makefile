@@ -1,4 +1,4 @@
-.PHONY: help setup lint lint-fix fmt hooks test test-verbose test-coverage test-clean
+.PHONY: help setup lint lint-staged lint-fix fmt hooks test test-verbose test-coverage test-clean
 
 # Variables
 GO := go
@@ -20,9 +20,19 @@ hooks: ## Configure git hooks
 	@git config core.hooksPath .githooks
 	@echo "Git hooks configured"
 
-lint: ## Run linter
-	@echo "Running linter..."
+lint: ## Run linter on entire codebase
+	@echo "Running linter on entire codebase..."
 	@golangci-lint run
+
+lint-staged: ## Run linter only on staged changes
+	@echo "Running linter on staged changes..."
+	@git diff --cached > /tmp/lazispace-stage.patch
+	@if [ -s /tmp/lazispace-stage.patch ]; then \
+		golangci-lint run --new-from-patch=/tmp/lazispace-stage.patch; \
+	else \
+		echo "No staged changes to lint"; \
+	fi
+	@rm -f /tmp/lazispace-stage.patch
 
 lint-fix: ## Run linter with auto-fix
 	@echo "Running linter with auto-fix..."
