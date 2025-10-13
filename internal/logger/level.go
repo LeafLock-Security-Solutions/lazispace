@@ -1,6 +1,10 @@
 package logger
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/LeafLock-Security-Solutions/lazispace/internal/constants"
+)
 
 // LogLevel represents the severity level of a log message.
 type LogLevel int
@@ -16,11 +20,11 @@ const (
 
 // Log level string representations.
 const (
-	levelDebugStr   = "debug"
-	levelInfoStr    = "info"
-	levelWarnStr    = "warn"
+	levelDebugStr   = constants.LogLevelDebug
+	levelInfoStr    = constants.LogLevelInfo
+	levelWarnStr    = constants.LogLevelWarn
 	levelWarningStr = "warning" // Alias for warn
-	levelErrorStr   = "error"
+	levelErrorStr   = constants.LogLevelError
 	levelFatalStr   = "fatal"
 	levelUnknownStr = "unknown"
 )

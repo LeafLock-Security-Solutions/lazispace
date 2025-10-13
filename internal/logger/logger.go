@@ -8,22 +8,18 @@ import (
 	"sync"
 
 	"github.com/LeafLock-Security-Solutions/lazispace/internal/app"
+	"github.com/LeafLock-Security-Solutions/lazispace/internal/interfaces"
 )
 
-// Logger defines the interface for logging operations.
-type Logger interface {
-	Debug(msg string, fields ...Field)
-	Info(msg string, fields ...Field)
-	Warn(msg string, fields ...Field)
-	Error(msg string, fields ...Field)
-	Fatal(msg string, fields ...Field)
-}
+// Logger is an alias for the shared logger interface.
+// This allows the logger package to use Logger while other packages
+// can import interfaces.Logger to avoid import cycles.
+type Logger = interfaces.Logger
 
-// Field represents a key-value pair for structured logging.
-type Field struct {
-	Key   string
-	Value any
-}
+// Field is an alias for the shared field type.
+// This allows the logger package to use Field while other packages
+// can import interfaces.Field to avoid import cycles.
+type Field = interfaces.Field
 
 // NewField creates a new log field with the given key and value.
 func NewField(key string, value any) Field {
