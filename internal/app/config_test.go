@@ -4,7 +4,23 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/LeafLock-Security-Solutions/lazispace/internal/interfaces"
 )
+
+// testLogger is a no-op logger for testing config loading.
+type testLogger struct{}
+
+func (l *testLogger) Debug(msg string, fields ...interfaces.Field) {}
+func (l *testLogger) Info(msg string, fields ...interfaces.Field)  {}
+func (l *testLogger) Warn(msg string, fields ...interfaces.Field)  {}
+func (l *testLogger) Error(msg string, fields ...interfaces.Field) {}
+func (l *testLogger) Fatal(msg string, fields ...interfaces.Field) {}
+
+// newTestLogger creates a no-op logger for testing.
+func newTestLogger() interfaces.Logger {
+	return &testLogger{}
+}
 
 // TestValidateConfig_AppMetadata tests validation of application metadata.
 func TestValidateConfig_AppMetadata(t *testing.T) {
@@ -541,10 +557,7 @@ func TestGetEnvironment(t *testing.T) {
 			os.Setenv(envVarName, tt.envValue)
 			defer os.Unsetenv(envVarName)
 
-			// Test both functions
-			if got := getEnvironment(); got != tt.want {
-				t.Errorf("getEnvironment() = %v, want %v", got, tt.want)
-			}
+			// Test exported function
 			if got := GetEnvironment(); got != tt.want {
 				t.Errorf("GetEnvironment() = %v, want %v", got, tt.want)
 			}
@@ -554,56 +567,10 @@ func TestGetEnvironment(t *testing.T) {
 	// Test with no environment set
 	t.Run("no environment set", func(t *testing.T) {
 		os.Unsetenv(envVarName)
-		if got := getEnvironment(); got != "" {
-			t.Errorf("getEnvironment() with no env = %v, want empty string", got)
-		}
 		if got := GetEnvironment(); got != "" {
 			t.Errorf("GetEnvironment() with no env = %v, want empty string", got)
 		}
 	})
-}
-
-// TestGetLogFilePath tests the GetLogFilePath method.
-func TestGetLogFilePath(t *testing.T) {
-	tests := []struct {
-		name     string
-		config   Config
-		expected string
-	}{
-		{
-			name: "file logging enabled",
-			config: Config{
-				Log: LogConfig{
-					File: FileLogConfig{
-						Enabled:  true,
-						Path:     "/var/log/app",
-						Filename: "app.log",
-					},
-				},
-			},
-			expected: "/var/log/app/app.log",
-		},
-		{
-			name: "file logging disabled",
-			config: Config{
-				Log: LogConfig{
-					File: FileLogConfig{
-						Enabled: false,
-					},
-				},
-			},
-			expected: "",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			result := tt.config.GetLogFilePath()
-			if result != tt.expected {
-				t.Errorf("GetLogFilePath() = %q, want %q", result, tt.expected)
-			}
-		})
-	}
 }
 
 // TestLoadConfig_WithTestData tests LoadConfig with actual YAML files.
@@ -626,7 +593,7 @@ func TestLoadConfig_WithTestData(t *testing.T) {
 		// Clear environment
 		os.Unsetenv(envVarName)
 
-		cfg, err := LoadConfig()
+		cfg, err := LoadConfig(newTestLogger())
 		if err != nil {
 			t.Fatalf("LoadConfig() failed: %v", err)
 		}
@@ -661,7 +628,7 @@ func TestLoadConfig_WithTestData(t *testing.T) {
 		os.Setenv(envVarName, "dev")
 		defer os.Unsetenv(envVarName)
 
-		cfg, err := LoadConfig()
+		cfg, err := LoadConfig(newTestLogger())
 		if err != nil {
 			t.Fatalf("LoadConfig() with dev env failed: %v", err)
 		}
@@ -712,7 +679,7 @@ func TestLoadConfig_WithTestData(t *testing.T) {
 		defer os.Chdir(originalWd)
 		os.Unsetenv(envVarName)
 
-		_, err = LoadConfig()
+		_, err = LoadConfig(newTestLogger())
 		if err == nil {
 			t.Fatal("LoadConfig() should fail with malformed YAML")
 		}
@@ -739,7 +706,7 @@ func TestLoadConfig_WithTestData(t *testing.T) {
 		defer os.Chdir(originalWd)
 		os.Unsetenv(envVarName)
 
-		_, err = LoadConfig()
+		_, err = LoadConfig(newTestLogger())
 		if err == nil {
 			t.Fatal("LoadConfig() should fail with invalid log level")
 		}
@@ -766,7 +733,7 @@ func TestLoadConfig_WithTestData(t *testing.T) {
 		defer os.Chdir(originalWd)
 		os.Unsetenv(envVarName)
 
-		_, err = LoadConfig()
+		_, err = LoadConfig(newTestLogger())
 		if err == nil {
 			t.Fatal("LoadConfig() should fail with missing storage paths")
 		}
@@ -941,7 +908,7 @@ func TestLoadConfig_NoConfigFile(t *testing.T) {
 	os.Unsetenv(envVarName)
 
 	// Should fail because app.name will be empty (no config file)
-	_, err := LoadConfig()
+	_, err := LoadConfig(newTestLogger())
 	if err == nil {
 		t.Fatal("LoadConfig() should fail when no config file exists and name is empty")
 	}
@@ -965,7 +932,7 @@ func TestLoadConfig_EnvironmentVariableOverrides(t *testing.T) {
 
 	os.Unsetenv(envVarName)
 
-	cfg, err := LoadConfig()
+	cfg, err := LoadConfig(newTestLogger())
 	if err != nil {
 		t.Fatalf("LoadConfig() failed: %v", err)
 	}
