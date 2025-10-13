@@ -8,16 +8,12 @@ make fmt > /dev/null 2>&1 || {
     exit 1
 }
 
-# Run linter only if Go files exist
-if find . -name "*.go" -not -path "./vendor/*" | grep -q .; then
-    make lint || {
-        echo "Error: Linting failed"
-        echo "Fix the issues or use 'git commit --no-verify' to skip"
-        exit 1
-    }
-else
-    echo "No Go files found, skipping linter"
-fi
+# Run linter on staged changes
+make lint-staged || {
+    echo "Error: Linting failed on staged changes"
+    echo "Please fix the linting issues before committing"
+    exit 1
+}
 
 echo "Pre-commit checks passed"
 exit 0

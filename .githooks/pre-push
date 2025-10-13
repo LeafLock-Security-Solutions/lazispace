@@ -13,7 +13,7 @@ echo "Running tests..."
 make test
 if [ $? -ne 0 ]; then
     echo "Error: Tests failed"
-    echo "Fix the tests or use 'git push --no-verify' to skip"
+    echo "Please fix the failing tests before pushing"
     exit 1
 fi
 
