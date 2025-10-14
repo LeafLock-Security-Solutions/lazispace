@@ -1,4 +1,4 @@
-.PHONY: help setup lint lint-staged lint-fix fmt hooks test test-verbose test-coverage test-clean
+.PHONY: help setup lint lint-staged lint-fix fmt hooks test test-verbose test-coverage test-clean license-check license-fix
 
 # Variables
 GO := go
@@ -63,3 +63,9 @@ test-clean: ## Remove test artifacts
 	@echo "Cleaning test artifacts..."
 	@rm -f coverage.out coverage.html
 	@echo "Test artifacts cleaned"
+
+license-check: ## Check if all Go files have correct license headers
+	@./scripts/license-header.sh check
+
+license-fix: ## Fix all files (add missing or replace outdated license headers)
+	@./scripts/license-header.sh fix
