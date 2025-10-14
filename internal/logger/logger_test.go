@@ -1,3 +1,6 @@
+// Copyright 2025 LeafLock Security Solutions
+// SPDX-License-Identifier: Apache-2.0
+
 package logger
 
 import (

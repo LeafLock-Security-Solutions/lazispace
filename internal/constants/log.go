@@ -1,3 +1,6 @@
+// Copyright 2025 LeafLock Security Solutions
+// SPDX-License-Identifier: Apache-2.0
+
 // Package constants provides shared constant values used across the application.
 // This prevents duplication and ensures consistency across packages.
 package constants

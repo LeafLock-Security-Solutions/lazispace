@@ -1,3 +1,6 @@
+// Copyright 2025 LeafLock Security Solutions
+// SPDX-License-Identifier: Apache-2.0
+
 package app
 
 import "github.com/LeafLock-Security-Solutions/lazispace/internal/constants"
