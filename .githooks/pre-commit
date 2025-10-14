@@ -2,6 +2,13 @@
 
 echo "Running pre-commit checks..."
 
+# Check license headers on staged files
+./scripts/license-header.sh check-staged || {
+    echo "Error: License headers missing or outdated in staged files"
+    echo "Please fix with 'make license-fix', then re-stage files"
+    exit 1
+}
+
 # Format code
 make fmt > /dev/null 2>&1 || {
     echo "Error: Code formatting failed"
